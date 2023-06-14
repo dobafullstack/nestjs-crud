@@ -1,9 +1,10 @@
-import { Module } from '@nestjs/common';
+import { Global, Module } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import Redis from 'ioredis';
 import { MetadataKey } from 'src/common/constant';
 import { RedisService } from './redis.service';
 
+@Global()
 @Module({
 	providers: [
 		{

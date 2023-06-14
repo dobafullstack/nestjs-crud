@@ -11,6 +11,7 @@ import { AdminEntity } from './../entities/admin.entity';
 
 @Controller('admin')
 @ApiTags('Admin API')
+@AuthAdmin()
 export class AdminController extends BaseController<AdminEntity>(AdminEntity, 'admin') {
 	relations = [];
 
@@ -31,7 +32,6 @@ export class AdminController extends BaseController<AdminEntity>(AdminEntity, 'a
 
 	@Get('me')
 	@ApiGetDetail(AdminEntity, 'admin')
-	@AuthAdmin()
 	getMe(@User() user: AdminEntity) {
 		return user;
 	}

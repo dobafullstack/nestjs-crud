@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { DevtoolsModule } from '@nestjs/devtools-integration';
 import { ApiModule } from 'src/apis/api.module';
+import { CryptoModule } from 'src/crypto/crypto.module';
 import { DatabaseModule } from 'src/database/database.module';
 import { JWTModule } from 'src/jwt/jwt.module';
 import { PassportModule } from 'src/passport/passport.module';
@@ -22,6 +23,7 @@ import { providers } from './app.provider';
 		JWTModule,
 		RedisModule,
 		PassportModule,
+		CryptoModule,
 		ApiModule
 	],
 	controllers: [AppController],
