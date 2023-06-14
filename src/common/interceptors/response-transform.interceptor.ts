@@ -17,7 +17,7 @@ export class ResponseTransformInterceptor implements NestInterceptor {
 					return {
 						statusCode,
 						success: true,
-						data,
+						data: data[0],
 						metadata: getMetadata(request, data)
 					};
 				}

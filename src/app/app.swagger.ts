@@ -10,6 +10,7 @@ export function useSwagger(app: INestApplication) {
 		.setTitle('NestJS Example')
 		.setDescription('NestJS Example Documentation')
 		.setVersion('1.0')
+		.addBearerAuth()
 		.build();
 	const document = SwaggerModule.createDocument(app, config, {
 		extraModels

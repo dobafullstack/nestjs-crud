@@ -1,7 +1,9 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import { NotFoundException } from '@nestjs/common';
-import { DeepPartial, FindOptionsWhere, Repository } from 'typeorm';
+import { DeepPartial, FindOptionsOrder, FindOptionsWhere, Repository } from 'typeorm';
 import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
+import { getQueryBuilder } from '../helpers/queryBuilder';
+import { PaginationDto } from './base.dto';
 import { BaseEntity } from './base.entity';
 
 export abstract class BaseService<Entity extends BaseEntity> {
@@ -14,6 +16,16 @@ export abstract class BaseService<Entity extends BaseEntity> {
 		...relations: string[]
 	): Promise<Entity[]> {
 		return this.repo.find({ where, relations });
+	}
+
+	async getAllWithPagination(
+		query: PaginationDto,
+		where?: FindOptionsWhere<Entity> | FindOptionsWhere<Entity>[],
+		order?: FindOptionsOrder<Entity>,
+		...relations: string[]
+	): Promise<[Entity[], number]> {
+		const queryBuilder = getQueryBuilder(this.repo, query, where, order, ...relations);
+		return queryBuilder.getManyAndCount();
 	}
 
 	async getOne(
@@ -39,9 +51,9 @@ export abstract class BaseService<Entity extends BaseEntity> {
 		return entity;
 	}
 
-	async getOneByIdOrFail(id: string): Promise<Entity> {
+	async getOneByIdOrFail(id: string, ...relations: string[]): Promise<Entity> {
 		//@ts-ignore
-		const entity = await this.repo.findOne({ where: { id } });
+		const entity = await this.repo.findOne({ where: { id }, relations });
 		if (!entity) {
 			const errorMessage = `${this.name} not found`;
 			throw new NotFoundException(errorMessage);

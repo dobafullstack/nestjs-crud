@@ -1,10 +1,14 @@
-import { Body, Delete, Get, Param, Patch, Post } from '@nestjs/common';
+/* eslint-disable @typescript-eslint/ban-ts-comment */
+import { Body, Delete, Get, Param, Patch, Post, Query } from '@nestjs/common';
+import { PaginationDto } from './base.dto';
 import { BaseEntity } from './base.entity';
 import { BaseService } from './base.service';
 import { ApiCreate, ApiDelete, ApiGetAll, ApiGetDetail, ApiUpdate } from './base.swagger';
 
 export function BaseController<Entity extends BaseEntity>($ref: any, name?: string) {
-	class Controller {
+	abstract class Controller {
+		abstract relations: string[];
+
 		constructor(public readonly service: BaseService<Entity>) {}
 
 		@Post('create')
@@ -15,14 +19,20 @@ export function BaseController<Entity extends BaseEntity>($ref: any, name?: stri
 
 		@Get('all')
 		@ApiGetAll($ref, name)
-		getAll(): Promise<Entity[]> {
-			return this.service.getAll();
+		getAll(@Query() query: PaginationDto): Promise<[Entity[], number]> {
+			return this.service.getAllWithPagination(
+				query,
+				{},
+				//@ts-ignore
+				{ createdAt: 'DESC' },
+				...this.relations
+			);
 		}
 
 		@Get('detail/:id')
 		@ApiGetDetail($ref, name)
 		getDetail(@Param('id') id: string): Promise<Entity> {
-			return this.service.getOneByIdOrFail(id);
+			return this.service.getOneByIdOrFail(id, ...this.relations);
 		}
 
 		@Patch('update/:id')

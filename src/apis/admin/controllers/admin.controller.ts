@@ -12,6 +12,8 @@ import { AdminEntity } from './../entities/admin.entity';
 @Controller('admin')
 @ApiTags('Admin API')
 export class AdminController extends BaseController<AdminEntity>(AdminEntity, 'admin') {
+	relations = [];
+
 	constructor(private readonly adminService: AdminService) {
 		super(adminService);
 	}
