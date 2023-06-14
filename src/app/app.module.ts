@@ -1,6 +1,9 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { DevtoolsModule } from '@nestjs/devtools-integration';
+import { MulterModule } from '@nestjs/platform-express';
+import { ServeStaticModule } from '@nestjs/serve-static';
+import { join } from 'path';
 import { ApiModule } from 'src/apis/api.module';
 import { CryptoModule } from 'src/crypto/crypto.module';
 import { DatabaseModule } from 'src/database/database.module';
@@ -18,6 +21,12 @@ import { providers } from './app.provider';
 		}),
 		DevtoolsModule.register({
 			http: process.env.NODE_ENV !== 'production'
+		}),
+		MulterModule.register({
+			dest: './upload'
+		}),
+		ServeStaticModule.forRoot({
+			rootPath: join(__dirname, '..', '..', '..', 'uploads')
 		}),
 		DatabaseModule,
 		JWTModule,
