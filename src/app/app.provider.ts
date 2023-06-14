@@ -1,8 +1,7 @@
 import { ClassSerializerInterceptor, Provider } from '@nestjs/common';
-import { APP_FILTER, APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
+import { APP_FILTER, APP_INTERCEPTOR } from '@nestjs/core';
 import { HttpExceptionFilter } from 'src/common/filters/http-exception.filter';
 import { TypeormExceptionFilter } from 'src/common/filters/typeorm-exception.filter';
-import { RoleGuard } from 'src/common/guards/role.guard';
 import { ResponseTransformInterceptor } from 'src/common/interceptors/response-transform.interceptor';
 import { AppService } from './app.service';
 
@@ -23,9 +22,5 @@ export const providers: Provider[] = [
 	{
 		provide: APP_INTERCEPTOR,
 		useClass: ClassSerializerInterceptor
-	},
-	{
-		provide: APP_GUARD,
-		useClass: RoleGuard
 	}
 ];

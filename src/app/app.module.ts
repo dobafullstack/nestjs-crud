@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { DevtoolsModule } from '@nestjs/devtools-integration';
+import { ApiModule } from 'src/apis/api.module';
 import { DatabaseModule } from 'src/database/database.module';
 import { JWTModule } from 'src/jwt/jwt.module';
 import { PassportModule } from 'src/passport/passport.module';
@@ -20,7 +21,8 @@ import { providers } from './app.provider';
 		DatabaseModule,
 		JWTModule,
 		RedisModule,
-		PassportModule
+		PassportModule,
+		ApiModule
 	],
 	controllers: [AppController],
 	providers

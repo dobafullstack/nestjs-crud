@@ -1,11 +1,13 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
+import * as argon2 from 'argon2';
 import { Strategy } from 'passport-local';
+import { AdminService } from 'src/apis/admin/services/admin.service';
 import { StrategyKey } from 'src/common/constant';
 
 @Injectable()
 export class AdminStrategy extends PassportStrategy(Strategy, StrategyKey.LOCAL.ADMIN) {
-	constructor() {
+	constructor(private readonly adminService: AdminService) {
 		super({
 			usernameField: 'phone',
 			passwordField: 'password'
@@ -13,11 +15,12 @@ export class AdminStrategy extends PassportStrategy(Strategy, StrategyKey.LOCAL.
 	}
 
 	async validate(phone: string, password: string) {
-		// const where = { phone };
-		// const user = await this.adminService.getOne(where, 'role');
-		// if (!user || !(await compare(password, user.password))) {
-		// 	throw new UnauthorizedException(authTypes().AUTH_ADMIN_INCORRECT);
-		// }
-		// return user;
+		const where = { phone };
+		const admin = await this.adminService.getOneOrFail(where);
+		const comparePassword = await argon2.verify(admin.password, password);
+		if (!comparePassword) {
+			throw new UnauthorizedException('Invalid password');
+		}
+		return admin;
 	}
 }

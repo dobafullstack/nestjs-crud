@@ -1,5 +1,6 @@
 import { INestApplication, Logger } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { AdminEntity } from 'src/apis/admin/entities/admin.entity';
 
 export function useSwagger(app: INestApplication) {
 	const logger = new Logger('Swagger');
@@ -10,7 +11,26 @@ export function useSwagger(app: INestApplication) {
 		.setDescription('NestJS Example Documentation')
 		.setVersion('1.0')
 		.build();
-	const document = SwaggerModule.createDocument(app, config);
-	SwaggerModule.setup(path, app, document);
+	const document = SwaggerModule.createDocument(app, config, {
+		extraModels
+	});
+	SwaggerModule.setup(path, app, document, {
+		swaggerOptions: {
+			tagsSorter: 'alpha',
+			operationsSorter: (a, b) => {
+				const methodsOrder = ['get', 'post', 'put', 'patch', 'delete', 'options', 'trace'];
+				let result =
+					methodsOrder.indexOf(a.get('method')) - methodsOrder.indexOf(b.get('method'));
+
+				if (result === 0) {
+					result = a.get('path').localeCompare(b.get('path'));
+				}
+
+				return result;
+			}
+		}
+	});
 	logger.log(`Your documentation is running on http://localhost:${port}/${path}`);
 }
+
+const extraModels = [AdminEntity];

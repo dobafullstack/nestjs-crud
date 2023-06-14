@@ -1,8 +1,9 @@
 import { ArgumentsHost, Catch, ExceptionFilter } from '@nestjs/common';
+import { TypeORMError } from 'typeorm';
 
-@Catch()
+@Catch(TypeORMError)
 export class TypeormExceptionFilter<T> implements ExceptionFilter {
-	catch(exception: T, host: ArgumentsHost) {
+	catch(exception: TypeORMError, host: ArgumentsHost) {
 		console.log(exception);
 	}
 }
