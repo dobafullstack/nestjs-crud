@@ -1,0 +1,15 @@
+dist
+node_modules
+.husky
+.vscode
+patches
+uploads
+.commitlintrc.js
+.dockerignore
+.env.*
+.eslintrc.js
+.gitignore
+.prettierrc
+Dockerfile
+docker-compose.yaml
+README.md

@@ -1,0 +1,39 @@
+version: '3.8'
+
+services:
+  server:
+    container_name: nest_server
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - 3000:3000
+    env_file: ./.env
+    volumes:
+      - ./uploads:/app/uploads
+    depends_on:
+      - db
+      - redis
+  db:
+    container_name: nest_db
+    image: postgres:14.1-alpine
+    restart: always
+    env_file: ./.env
+    environment:
+      - POSTGRES_USER=$DB_USERNAME
+      - POSTGRES_PASSWORD=$DB_PASSWORD
+      - POSTGRES_DB=$DB_NAME
+    ports:
+      - '5433:5432'
+    volumes: 
+      - ./.docker/db:/var/lib/postgresql/data
+  redis:
+    container_name: nest_redis
+    image: redis:6.2-alpine
+    restart: unless-stopped
+    env_file: ./.env
+    ports:
+      - "6377:6379"
+    command: redis-server --save 20 1 --loglevel warning --requirepass $REDIS_PASSWORD
+    volumes: 
+      - './.docker/redis:/data'
