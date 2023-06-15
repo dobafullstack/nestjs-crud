@@ -41,7 +41,10 @@ function addWhere<Entity extends BaseEntity>(
 	const whereKeys = Object.keys(where);
 	for (let i = 0; i < whereKeys.length; i++) {
 		const key = whereKeys[i];
-		const queryString = `entity.${key} = :${where[key]}`;
+		let queryString = `entity.${key} = ${where[key]}`;
+		if (typeof where[key] === 'string') {
+			queryString = `entity.${key} = '${where[key]}'`;
+		}
 		let whereMethod = 'andWhere';
 		if (i === 0) {
 			whereMethod = 'where';
