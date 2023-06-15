@@ -9,7 +9,6 @@ import { APP_FILTER, APP_INTERCEPTOR, APP_PIPE } from '@nestjs/core';
 import { HttpExceptionFilter } from 'src/common/filters/http-exception.filter';
 import { TypeormExceptionFilter } from 'src/common/filters/typeorm-exception.filter';
 import { ResponseTransformInterceptor } from 'src/common/interceptors/response-transform.interceptor';
-import { AppService } from './app.service';
 
 const exceptionFactory = (errors: ValidationError[]) => {
 	throw new BadRequestException(
@@ -35,7 +34,6 @@ const validationErrors = (err: ValidationError) => {
 };
 
 export const providers: Provider[] = [
-	AppService,
 	{
 		provide: APP_FILTER,
 		useClass: HttpExceptionFilter

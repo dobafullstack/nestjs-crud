@@ -1,0 +1,239 @@
+diff --git a/node_modules/@nestjs/schematics/dist/lib/resource/files/ts/__name__.controller.ts b/node_modules/@nestjs/schematics/dist/lib/resource/files/ts/__name__.controller.ts
+deleted file mode 100644
+index 8d1b7b4..0000000
+--- a/node_modules/@nestjs/schematics/dist/lib/resource/files/ts/__name__.controller.ts
++++ /dev/null
+@@ -1,63 +0,0 @@
+-<% if (crud && type === 'rest') { %>import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';<%
+-} else if (crud && type === 'microservice') { %>import { Controller } from '@nestjs/common';
+-import { MessagePattern, Payload } from '@nestjs/microservices';<%
+-} else { %>import { Controller } from '@nestjs/common';<%
+-} %>
+-import { <%= classify(name) %>Service } from './<%= name %>.service';<% if (crud) { %>
+-import { Create<%= singular(classify(name)) %>Dto } from './dto/create-<%= singular(name) %>.dto';
+-import { Update<%= singular(classify(name)) %>Dto } from './dto/update-<%= singular(name) %>.dto';<% } %>
+-
+-<% if (type === 'rest') { %>@Controller('<%= dasherize(name) %>')<% } else { %>@Controller()<% } %>
+-export class <%= classify(name) %>Controller {
+-  constructor(private readonly <%= lowercased(name) %>Service: <%= classify(name) %>Service) {}<% if (type === 'rest' && crud) { %>
+-
+-  @Post()
+-  create(@Body() create<%= singular(classify(name)) %>Dto: Create<%= singular(classify(name)) %>Dto) {
+-    return this.<%= lowercased(name) %>Service.create(create<%= singular(classify(name)) %>Dto);
+-  }
+-
+-  @Get()
+-  findAll() {
+-    return this.<%= lowercased(name) %>Service.findAll();
+-  }
+-
+-  @Get(':id')
+-  findOne(@Param('id') id: string) {
+-    return this.<%= lowercased(name) %>Service.findOne(+id);
+-  }
+-
+-  @Patch(':id')
+-  update(@Param('id') id: string, @Body() update<%= singular(classify(name)) %>Dto: Update<%= singular(classify(name)) %>Dto) {
+-    return this.<%= lowercased(name) %>Service.update(+id, update<%= singular(classify(name)) %>Dto);
+-  }
+-
+-  @Delete(':id')
+-  remove(@Param('id') id: string) {
+-    return this.<%= lowercased(name) %>Service.remove(+id);
+-  }<% } else if (type === 'microservice' && crud) { %>
+-
+-  @MessagePattern('create<%= singular(classify(name)) %>')
+-  create(@Payload() create<%= singular(classify(name)) %>Dto: Create<%= singular(classify(name)) %>Dto) {
+-    return this.<%= lowercased(name) %>Service.create(create<%= singular(classify(name)) %>Dto);
+-  }
+-
+-  @MessagePattern('findAll<%= classify(name) %>')
+-  findAll() {
+-    return this.<%= lowercased(name) %>Service.findAll();
+-  }
+-
+-  @MessagePattern('findOne<%= singular(classify(name)) %>')
+-  findOne(@Payload() id: number) {
+-    return this.<%= lowercased(name) %>Service.findOne(id);
+-  }
+-
+-  @MessagePattern('update<%= singular(classify(name)) %>')
+-  update(@Payload() update<%= singular(classify(name)) %>Dto: Update<%= singular(classify(name)) %>Dto) {
+-    return this.<%= lowercased(name) %>Service.update(update<%= singular(classify(name)) %>Dto.id, update<%= singular(classify(name)) %>Dto);
+-  }
+-
+-  @MessagePattern('remove<%= singular(classify(name)) %>')
+-  remove(@Payload() id: number) {
+-    return this.<%= lowercased(name) %>Service.remove(id);
+-  }<% } %>
+-}
+diff --git a/node_modules/@nestjs/schematics/dist/lib/resource/files/ts/__name__.module.ts b/node_modules/@nestjs/schematics/dist/lib/resource/files/ts/__name__.module.ts
+index c45e860..9c1245b 100644
+--- a/node_modules/@nestjs/schematics/dist/lib/resource/files/ts/__name__.module.ts
++++ b/node_modules/@nestjs/schematics/dist/lib/resource/files/ts/__name__.module.ts
+@@ -1,9 +1,13 @@
+ import { Module } from '@nestjs/common';
+-import { <%= classify(name) %>Service } from './<%= name %>.service';
+-<% if (type === 'rest' || type === 'microservice') { %>import { <%= classify(name) %>Controller } from './<%= name %>.controller';<% } %><% if (type === 'graphql-code-first' || type === 'graphql-schema-first') { %>import { <%= classify(name) %>Resolver } from './<%= name %>.resolver';<% } %><% if (type === 'ws') { %>import { <%= classify(name) %>Gateway } from './<%= name %>.gateway';<% } %>
++import { TypeOrmModule } from '@nestjs/typeorm';
++import { <%= classify(name) %>Controller } from './controllers/<%= name %>.controller';
++import { <%= classify(name) %>Entity } from './entities/<%= singular(name) %>.entity';
++import { <%= classify(name) %>Service } from './services/<%= name %>.service';
+ 
+ @Module({
+-  <% if (type === 'rest' || type === 'microservice') { %>controllers: [<%= classify(name) %>Controller],
+-  providers: [<%= classify(name) %>Service]<% } else if (type === 'graphql-code-first' || type === 'graphql-schema-first') { %>providers: [<%= classify(name) %>Resolver, <%= classify(name) %>Service]<% } else { %>providers: [<%= classify(name) %>Gateway, <%= classify(name) %>Service]<% } %>
++	imports: [TypeOrmModule.forFeature([<%= classify(name) %>Entity])],
++	controllers: [<%= classify(name) %>Controller],
++	providers: [<%= classify(name) %>Service],
++	exports: [<%= classify(name) %>Service]
+ })
+-export class <%= classify(name) %>Module {}
++export class AdminModule {}
+diff --git a/node_modules/@nestjs/schematics/dist/lib/resource/files/ts/__name__.service.ts b/node_modules/@nestjs/schematics/dist/lib/resource/files/ts/__name__.service.ts
+deleted file mode 100644
+index 21943aa..0000000
+--- a/node_modules/@nestjs/schematics/dist/lib/resource/files/ts/__name__.service.ts
++++ /dev/null
+@@ -1,28 +0,0 @@
+-import { Injectable } from '@nestjs/common';<% if (crud && type !== 'graphql-code-first' && type !== 'graphql-schema-first') { %>
+-import { Create<%= singular(classify(name)) %>Dto } from './dto/create-<%= singular(name) %>.dto';
+-import { Update<%= singular(classify(name)) %>Dto } from './dto/update-<%= singular(name) %>.dto';<% } else if (crud) { %>
+-import { Create<%= singular(classify(name)) %>Input } from './dto/create-<%= singular(name) %>.input';
+-import { Update<%= singular(classify(name)) %>Input } from './dto/update-<%= singular(name) %>.input';<% } %>
+-
+-@Injectable()
+-export class <%= classify(name) %>Service {<% if (crud) { %>
+-  create(<% if (type !== 'graphql-code-first' && type !== 'graphql-schema-first') { %>create<%= singular(classify(name)) %>Dto: Create<%= singular(classify(name)) %>Dto<% } else { %>create<%= singular(classify(name)) %>Input: Create<%= singular(classify(name)) %>Input<% } %>) {
+-    return 'This action adds a new <%= lowercased(singular(classify(name))) %>';
+-  }
+-
+-  findAll() {
+-    return `This action returns all <%= lowercased(classify(name)) %>`;
+-  }
+-
+-  findOne(id: number) {
+-    return `This action returns a #${id} <%= lowercased(singular(classify(name))) %>`;
+-  }
+-
+-  update(id: number, <% if (type !== 'graphql-code-first' && type !== 'graphql-schema-first') { %>update<%= singular(classify(name)) %>Dto: Update<%= singular(classify(name)) %>Dto<% } else { %>update<%= singular(classify(name)) %>Input: Update<%= singular(classify(name)) %>Input<% } %>) {
+-    return `This action updates a #${id} <%= lowercased(singular(classify(name))) %>`;
+-  }
+-
+-  remove(id: number) {
+-    return `This action removes a #${id} <%= lowercased(singular(classify(name))) %>`;
+-  }
+-<% } %>}
+diff --git a/node_modules/@nestjs/schematics/dist/lib/resource/files/ts/controllers/__name__.controller.ts b/node_modules/@nestjs/schematics/dist/lib/resource/files/ts/controllers/__name__.controller.ts
+new file mode 100644
+index 0000000..ff3c844
+--- /dev/null
++++ b/node_modules/@nestjs/schematics/dist/lib/resource/files/ts/controllers/__name__.controller.ts
+@@ -0,0 +1,30 @@
++import { Body, Controller, Param, Patch, Post } from '@nestjs/common';
++import { ApiTags } from '@nestjs/swagger';
++import { BaseController } from 'src/common/base/base.controller';
++import { ApiCreate, ApiUpdate } from 'src/common/base/base.swagger';
++import { Create<%= singular(classify(name)) %>Dto } from '../dto/create-<%= singular(name) %>.dto';
++import { Update<%= singular(classify(name)) %>Dto } from '../dto/update-<%= singular(name) %>.dto';
++import { <%= classify(name) %>Service } from '../services/<%= name %>.service';
++import { <%= classify(name) %>Entity } from '../entities/<%= singular(name) %>.entity';
++
++@Controller('<%= dasherize(name) %>')
++@ApiTags('<%= classify(name) %> API')
++export class <%= classify(name) %>Controller extends BaseController<<%= classify(name) %>Entity>(<%= classify(name) %>Entity, '<%= lowercased(name) %>') {
++	relations = [];
++
++	constructor(private readonly <%= lowercased(name) %>Service: <%= classify(name) %>Service) {
++		super(<%= lowercased(name) %>Service);
++	}
++
++	@Post()
++	@ApiCreate(<%= classify(name) %>Entity, '<%= lowercased(name) %>')
++	create(@Body() body: Create<%= classify(name) %>Dto) {
++		return super.create(body);
++	}
++
++	@Patch(':id')
++	@ApiUpdate(<%= classify(name) %>Entity, '<%= lowercased(name) %>')
++	update(@Param('id') id: string, @Body() body: Update<%= classify(name) %>Dto) {
++		return super.update(id, body);
++	}
++}
+diff --git a/node_modules/@nestjs/schematics/dist/lib/resource/files/ts/entities/__name@singular@ent__.ts b/node_modules/@nestjs/schematics/dist/lib/resource/files/ts/entities/__name@singular@ent__.ts
+index 362e741..a9b7375 100644
+--- a/node_modules/@nestjs/schematics/dist/lib/resource/files/ts/entities/__name@singular@ent__.ts
++++ b/node_modules/@nestjs/schematics/dist/lib/resource/files/ts/entities/__name@singular@ent__.ts
+@@ -1,7 +1,5 @@
+-<% if (type === 'graphql-code-first') { %>import { ObjectType, Field, Int } from '@nestjs/graphql';
++import { BaseEntity } from 'src/common/base/base.entity';
++import { Entity } from 'typeorm';
+ 
+-@ObjectType()
+-export class <%= singular(classify(name)) %> {
+-  @Field(() => Int, { description: 'Example field (placeholder)' })
+-  exampleField: number;
+-}<% } else { %>export class <%= singular(classify(name)) %> {}<% } %>
++@Entity({ name: '<%= underscore(name) %>' })
++export class <%= singular(classify(name)) %>Entity extends BaseEntity {}
+diff --git a/node_modules/@nestjs/schematics/dist/lib/resource/files/ts/services/__name__.service.ts b/node_modules/@nestjs/schematics/dist/lib/resource/files/ts/services/__name__.service.ts
+new file mode 100644
+index 0000000..f006efe
+--- /dev/null
++++ b/node_modules/@nestjs/schematics/dist/lib/resource/files/ts/services/__name__.service.ts
+@@ -0,0 +1,17 @@
++import { Injectable } from '@nestjs/common';
++import { InjectRepository } from '@nestjs/typeorm';
++import { BaseService } from 'src/common/base/base.service';
++import { Repository } from 'typeorm';
++import { <%= classify(name) %>Entity } from '../entities/<%= singular(name) %>.entity';
++
++@Injectable()
++export class <%= classify(name) %>Service extends BaseService<<%= classify(name) %>Entity> {
++	name = '<%= classify(name) %>';
++
++	constructor(
++		@InjectRepository(<%= classify(name) %>Entity)
++		private readonly <%= lowercased(name) %>Repo: Repository<<%= classify(name) %>Entity>
++	) {
++		super(<%= lowercased(name) %>Repo);
++	}
++}
+diff --git a/node_modules/@nestjs/schematics/dist/lib/resource/files/ts/__name__.controller.__specFileSuffix__.ts b/node_modules/@nestjs/schematics/dist/lib/resource/files/ts/test/__name__.controller.__specFileSuffix__.ts
+similarity index 76%
+rename from node_modules/@nestjs/schematics/dist/lib/resource/files/ts/__name__.controller.__specFileSuffix__.ts
+rename to node_modules/@nestjs/schematics/dist/lib/resource/files/ts/test/__name__.controller.__specFileSuffix__.ts
+index 17e5843..cfef2d1 100644
+--- a/node_modules/@nestjs/schematics/dist/lib/resource/files/ts/__name__.controller.__specFileSuffix__.ts
++++ b/node_modules/@nestjs/schematics/dist/lib/resource/files/ts/test/__name__.controller.__specFileSuffix__.ts
+@@ -1,6 +1,6 @@
+ import { Test, TestingModule } from '@nestjs/testing';
+-import { <%= classify(name) %>Controller } from './<%= name %>.controller';
+-import { <%= classify(name) %>Service } from './<%= name %>.service';
++import { <%= classify(name) %>Controller } from '../controllers/<%= name %>.controller';
++import { <%= classify(name) %>Service } from '../services/<%= name %>.service';
+ 
+ describe('<%= classify(name) %>Controller', () => {
+   let controller: <%= classify(name) %>Controller;
+diff --git a/node_modules/@nestjs/schematics/dist/lib/resource/files/ts/__name__.gateway.__specFileSuffix__.ts b/node_modules/@nestjs/schematics/dist/lib/resource/files/ts/test/__name__.gateway.__specFileSuffix__.ts
+similarity index 100%
+rename from node_modules/@nestjs/schematics/dist/lib/resource/files/ts/__name__.gateway.__specFileSuffix__.ts
+rename to node_modules/@nestjs/schematics/dist/lib/resource/files/ts/test/__name__.gateway.__specFileSuffix__.ts
+diff --git a/node_modules/@nestjs/schematics/dist/lib/resource/files/ts/__name__.resolver.__specFileSuffix__.ts b/node_modules/@nestjs/schematics/dist/lib/resource/files/ts/test/__name__.resolver.__specFileSuffix__.ts
+similarity index 100%
+rename from node_modules/@nestjs/schematics/dist/lib/resource/files/ts/__name__.resolver.__specFileSuffix__.ts
+rename to node_modules/@nestjs/schematics/dist/lib/resource/files/ts/test/__name__.resolver.__specFileSuffix__.ts
+diff --git a/node_modules/@nestjs/schematics/dist/lib/resource/files/ts/__name__.service.__specFileSuffix__.ts b/node_modules/@nestjs/schematics/dist/lib/resource/files/ts/test/__name__.service.__specFileSuffix__.ts
+similarity index 85%
+rename from node_modules/@nestjs/schematics/dist/lib/resource/files/ts/__name__.service.__specFileSuffix__.ts
+rename to node_modules/@nestjs/schematics/dist/lib/resource/files/ts/test/__name__.service.__specFileSuffix__.ts
+index 2b3f38b..cfcc49f 100644
+--- a/node_modules/@nestjs/schematics/dist/lib/resource/files/ts/__name__.service.__specFileSuffix__.ts
++++ b/node_modules/@nestjs/schematics/dist/lib/resource/files/ts/test/__name__.service.__specFileSuffix__.ts
+@@ -1,5 +1,5 @@
+ import { Test, TestingModule } from '@nestjs/testing';
+-import { <%= classify(name) %>Service } from './<%= name %>.service';
++import { <%= classify(name) %>Service } from '../services/<%= name %>.service';
+ 
+ describe('<%= classify(name) %>Service', () => {
+   let service: <%= classify(name) %>Service;

@@ -12,6 +12,7 @@ import { PassportModule } from 'src/passport/passport.module';
 import { RedisModule } from 'src/redis/redis.module';
 import { AppController } from './app.controller';
 import { providers } from './app.provider';
+import { AppService } from './app.service';
 
 @Module({
 	imports: [
@@ -36,6 +37,6 @@ import { providers } from './app.provider';
 		ApiModule
 	],
 	controllers: [AppController],
-	providers
+	providers: [AppService, ...providers]
 })
 export class AppModule {}
