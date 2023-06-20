@@ -7,7 +7,7 @@ RUN yarn global add @nestjs/cli
 
 #Install dependencies
 COPY package.json .
-RUN yarn --production=true
+RUN yarn
 
 #Build
 COPY . .
