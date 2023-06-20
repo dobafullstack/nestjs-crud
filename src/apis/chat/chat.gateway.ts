@@ -1,3 +1,6 @@
+import { TokenExpires } from '@app/constants';
+import { JwtService } from '@app/jwt';
+import { RedisService } from '@app/redis';
 import { BadRequestException, UnauthorizedException } from '@nestjs/common';
 import {
 	OnGatewayConnection,
@@ -8,9 +11,6 @@ import {
 	WebSocketServer
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
-import { TokenExpires } from 'src/common/constant';
-import { JwtService } from 'src/jwt/jwt.service';
-import { RedisService } from 'src/redis/redis.service';
 import { AdminService } from '../admin/services/admin.service';
 import { ChatMessage } from './dto/chat-message.dto';
 import { MessageEntity } from './entities/message.entity';

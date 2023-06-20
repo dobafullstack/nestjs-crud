@@ -1,9 +1,41 @@
 {
-  "moduleFileExtensions": ["js", "json", "ts"],
+  "moduleFileExtensions": [
+    "js",
+    "json",
+    "ts"
+  ],
   "rootDir": ".",
   "testEnvironment": "node",
   "testRegex": ".e2e-spec.ts$",
   "transform": {
     "^.+\\.(t|j)s$": "ts-jest"
+  },
+  "moduleNameMapper": {
+    "@app/jwt/(.*)": "<rootDir>/../libs/jwt/src/$1",
+    "@app/jwt": "<rootDir>/../libs/jwt/src",
+    "@app/crypto/(.*)": "<rootDir>/../libs/crypto/src/$1",
+    "@app/crypto": "<rootDir>/../libs/crypto/src",
+    "@app/redis/(.*)": "<rootDir>/../libs/redis/src/$1",
+    "@app/redis": "<rootDir>/../libs/redis/src",
+    "@app/database/(.*)": "<rootDir>/../libs/database/src/$1",
+    "@app/database": "<rootDir>/../libs/database/src",
+    "@app/base/(.*)": "<rootDir>/../libs/base/src/$1",
+    "@app/base": "<rootDir>/../libs/base/src",
+    "@app/decorators/(.*)": "<rootDir>/../libs/decorators/src/$1",
+    "@app/decorators": "<rootDir>/../libs/decorators/src",
+    "@app/filters/(.*)": "<rootDir>/../libs/filters/src/$1",
+    "@app/filters": "<rootDir>/../libs/filters/src",
+    "@app/guards/(.*)": "<rootDir>/../libs/guards/src/$1",
+    "@app/guards": "<rootDir>/../libs/guards/src",
+    "@app/interceptors/(.*)": "<rootDir>/../libs/interceptors/src/$1",
+    "@app/interceptors": "<rootDir>/../libs/interceptors/src",
+    "@app/helpers/(.*)": "<rootDir>/../libs/helpers/src/$1",
+    "@app/helpers": "<rootDir>/../libs/helpers/src",
+    "@app/enums/(.*)": "<rootDir>/../libs/enums/src/$1",
+    "@app/enums": "<rootDir>/../libs/enums/src",
+    "@app/interfaces/(.*)": "<rootDir>/../libs/interfaces/src/$1",
+    "@app/interfaces": "<rootDir>/../libs/interfaces/src",
+    "@app/constants/(.*)": "<rootDir>/../libs/constants/src/$1",
+    "@app/constants": "<rootDir>/../libs/constants/src"
   }
 }

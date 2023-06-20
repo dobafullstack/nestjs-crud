@@ -1,11 +1,11 @@
+import { CryptoService } from '@app/crypto';
+import { SetCookieRFToken } from '@app/helpers/setCookieRFToken';
+import { JwtService } from '@app/jwt';
+import { RedisService } from '@app/redis';
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import * as argon2 from 'argon2';
 import { Request, Response } from 'express';
-import { SetCookieRFToken } from 'src/common/helpers/setCookieRFToken';
-import { CryptoService } from 'src/crypto/crypto.service';
-import { JwtService } from 'src/jwt/jwt.service';
-import { RedisService } from 'src/redis/redis.service';
-import { AdminService } from '../../admin/services/admin.service';
+import { AdminService } from 'src/apis/admin/services/admin.service';
 import { ChangePasswordDto } from '../dtos/change-password.dto';
 import { User, UserType } from '../interfaces/auth.interface';
 

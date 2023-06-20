@@ -1,8 +1,8 @@
+import { PaginationDto } from '@app/base';
+import { AuthAdmin } from '@app/decorators/auth-admin.decorator';
 import { Controller, Get, Param, Query } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
-import { PaginationDto } from 'src/common/base/base.dto';
 import { MessageService } from '../services/message.service';
-import { AuthAdmin } from 'src/common/decorators/auth-admin.decorator';
 
 @Controller('message')
 @ApiTags('Message API')

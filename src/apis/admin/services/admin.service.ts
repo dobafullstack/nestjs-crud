@@ -1,6 +1,6 @@
+import { BaseService } from '@app/base';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { BaseService } from 'src/common/base/base.service';
 import { Repository } from 'typeorm';
 import { AdminEntity } from '../entities/admin.entity';
 

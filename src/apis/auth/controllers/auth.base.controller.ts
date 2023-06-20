@@ -1,9 +1,9 @@
+import { AuthAdmin } from '@app/decorators/auth-admin.decorator';
+import { User } from '@app/decorators/user.decorator';
 import { Body, Get, HttpCode, Post, Req, Res, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { Request, Response } from 'express';
 import { AdminEntity } from 'src/apis/admin/entities/admin.entity';
-import { AuthAdmin } from 'src/common/decorators/auth-admin.decorator';
-import { User } from 'src/common/decorators/user.decorator';
 import { ApiChangePassword, ApiLogin, ApiLogout, ApiRefreshToken } from '../auth.swagger';
 import { ChangePasswordDto } from '../dtos/change-password.dto';
 import { LoginDto } from '../dtos/login.dto';

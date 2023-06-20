@@ -1,5 +1,5 @@
+import { BaseEntity } from '@app/base';
 import { AdminEntity } from 'src/apis/admin/entities/admin.entity';
-import { BaseEntity } from 'src/common/base/base.entity';
 import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
 import { RoomEntity } from './room.entity';
 

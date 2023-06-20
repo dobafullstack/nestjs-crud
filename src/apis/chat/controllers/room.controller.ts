@@ -1,11 +1,9 @@
+import { ApiCreate, ApiUpdate, BaseController, PaginationDto } from '@app/base';
+import { AuthAdmin } from '@app/decorators/auth-admin.decorator';
+import { User } from '@app/decorators/user.decorator';
 import { Body, Controller, Get, Param, Post, Query } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { AdminEntity } from 'src/apis/admin/entities/admin.entity';
-import { BaseController } from 'src/common/base/base.controller';
-import { PaginationDto } from 'src/common/base/base.dto';
-import { ApiCreate, ApiUpdate } from 'src/common/base/base.swagger';
-import { AuthAdmin } from 'src/common/decorators/auth-admin.decorator';
-import { User } from 'src/common/decorators/user.decorator';
 import { ArrayContains } from 'typeorm';
 import { CreateRoomDto } from '../dto/create-room.dto';
 import { UpdateRoomDto } from '../dto/update-room.dto';
