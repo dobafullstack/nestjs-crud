@@ -1,9 +1,8 @@
+import { ApiCreate, ApiGetDetail, ApiUpdate, BaseController } from '@app/base';
+import { AuthAdmin } from '@app/decorators/auth-admin.decorator';
+import { User } from '@app/decorators/user.decorator';
 import { Body, Controller, Get, Param, Patch, Post } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
-import { BaseController } from 'src/common/base/base.controller';
-import { ApiCreate, ApiGetDetail, ApiUpdate } from 'src/common/base/base.swagger';
-import { AuthAdmin } from 'src/common/decorators/auth-admin.decorator';
-import { User } from 'src/common/decorators/user.decorator';
 import { CreateAdminDto } from '../dto/create-admin.dto';
 import { UpdateAdminDto } from '../dto/update-admin.dto';
 import { AdminService } from '../services/admin.service';

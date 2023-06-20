@@ -1,9 +1,131 @@
 {
-	"$schema": "https://json.schemastore.org/nest-cli",
-	"collection": "@nestjs/schematics",
-	"sourceRoot": "src",
-	"compilerOptions": {
-		"deleteOutDir": true,
-		"plugins": ["@nestjs/swagger"]
-	}
+  "$schema": "https://json.schemastore.org/nest-cli",
+  "collection": "@nestjs/schematics",
+  "sourceRoot": "src",
+  "compilerOptions": {
+    "deleteOutDir": true,
+    "plugins": [
+      "@nestjs/swagger"
+    ],
+    "webpack": true
+  },
+  "projects": {
+    "jwt": {
+      "type": "library",
+      "root": "libs/jwt",
+      "entryFile": "index",
+      "sourceRoot": "libs/jwt/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/jwt/tsconfig.lib.json"
+      }
+    },
+    "crypto": {
+      "type": "library",
+      "root": "libs/crypto",
+      "entryFile": "index",
+      "sourceRoot": "libs/crypto/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/crypto/tsconfig.lib.json"
+      }
+    },
+    "redis": {
+      "type": "library",
+      "root": "libs/redis",
+      "entryFile": "index",
+      "sourceRoot": "libs/redis/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/redis/tsconfig.lib.json"
+      }
+    },
+    "database": {
+      "type": "library",
+      "root": "libs/database",
+      "entryFile": "index",
+      "sourceRoot": "libs/database/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/database/tsconfig.lib.json"
+      }
+    },
+    "base": {
+      "type": "library",
+      "root": "libs/base",
+      "entryFile": "index",
+      "sourceRoot": "libs/base/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/base/tsconfig.lib.json"
+      }
+    },
+    "decorators": {
+      "type": "library",
+      "root": "libs/decorators",
+      "entryFile": "index",
+      "sourceRoot": "libs/decorators/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/decorators/tsconfig.lib.json"
+      }
+    },
+    "filters": {
+      "type": "library",
+      "root": "libs/filters",
+      "entryFile": "index",
+      "sourceRoot": "libs/filters/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/filters/tsconfig.lib.json"
+      }
+    },
+    "guards": {
+      "type": "library",
+      "root": "libs/guards",
+      "entryFile": "index",
+      "sourceRoot": "libs/guards/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/guards/tsconfig.lib.json"
+      }
+    },
+    "interceptors": {
+      "type": "library",
+      "root": "libs/interceptors",
+      "entryFile": "index",
+      "sourceRoot": "libs/interceptors/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/interceptors/tsconfig.lib.json"
+      }
+    },
+    "helpers": {
+      "type": "library",
+      "root": "libs/helpers",
+      "entryFile": "index",
+      "sourceRoot": "libs/helpers/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/helpers/tsconfig.lib.json"
+      }
+    },
+    "enums": {
+      "type": "library",
+      "root": "libs/enums",
+      "entryFile": "index",
+      "sourceRoot": "libs/enums/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/enums/tsconfig.lib.json"
+      }
+    },
+    "interfaces": {
+      "type": "library",
+      "root": "libs/interfaces",
+      "entryFile": "index",
+      "sourceRoot": "libs/interfaces/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/interfaces/tsconfig.lib.json"
+      }
+    },
+    "constants": {
+      "type": "library",
+      "root": "libs/constants",
+      "entryFile": "index",
+      "sourceRoot": "libs/constants/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/constants/tsconfig.lib.json"
+      }
+    }
+  }
 }

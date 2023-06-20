@@ -1,7 +1,7 @@
+import { BaseService } from '@app/base';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { AdminService } from 'src/apis/admin/services/admin.service';
-import { BaseService } from 'src/common/base/base.service';
 import { Repository } from 'typeorm';
 import { CreateRoomDto } from '../dto/create-room.dto';
 import { RoomEntity } from '../entities/room.entity';

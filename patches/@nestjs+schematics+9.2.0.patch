@@ -137,9 +137,9 @@ index 0000000..ad3bea7
 +import { <%= classify(name) %>Service } from '../services/<%= name %>.service';<% if (crud) { %>
 +import { Create<%= singular(classify(name)) %>Dto } from '../dto/create-<%= singular(name) %>.dto';
 +import { Update<%= singular(classify(name)) %>Dto } from '../dto/update-<%= singular(name) %>.dto';
-+import { BaseController } from 'src/common/base/base.controller';
++import { BaseController } from '@app/base/base.controller';
 +import { <%= classify(name) %>Entity } from '../entities/<%= name %>.entity';
-+import { ApiCreate, ApiUpdate } from 'src/common/base/base.swagger';<% } %>
++import { ApiCreate, ApiUpdate } from '@app/base/base.swagger';<% } %>
 +import { ApiTags } from '@nestjs/swagger';
 +
 +<% if (type === 'rest') { %>@Controller('<%= dasherize(name) %>')<% } else { %>@Controller()<% } %>
@@ -198,7 +198,7 @@ index 362e741..16c55c4 100644
    exampleField: number;
 -}<% } else { %>export class <%= singular(classify(name)) %> {}<% } %>
 +}<% } else { %>import { Entity } from 'typeorm';
-+import { BaseEntity } from 'src/common/base/base.entity';
++import { BaseEntity } from '@app/base/base.entity';
 +
 +@Entity({ name: '<%= underscore(name) %>' })
 +export class <%= singular(classify(name)) %>Entity extends BaseEntity {}<% } %>
@@ -222,7 +222,7 @@ index 0000000..6ab6c4c
 @@ -0,0 +1,19 @@
 +import { Injectable } from '@nestjs/common';<% if (crud && type !== 'graphql-code-first' && type !== 'graphql-schema-first') { %>
 +import { InjectRepository } from '@nestjs/typeorm';
-+import { BaseService } from 'src/common/base/base.service';
++import { BaseService } from '@app/base/base.service';
 +import { Repository } from 'typeorm';
 +import { <%= classify(name) %>Entity } from '../entities/<%= name %>.entity';<% } else if (crud) { %>
 +import { Create<%= singular(classify(name)) %>Input } from './dto/create-<%= singular(name) %>.input';

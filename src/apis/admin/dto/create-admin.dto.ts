@@ -1,5 +1,5 @@
+import { Roles } from '@app/enums/role.enum';
 import { IsEnum, IsNotEmpty, IsNumberString, IsString } from 'class-validator';
-import { Roles } from 'src/common/enums/role.enum';
 
 export class CreateAdminDto {
 	@IsNumberString()

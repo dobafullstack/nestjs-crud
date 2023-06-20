@@ -1,6 +1,6 @@
+import { OkResponse } from '@app/base';
 import { applyDecorators } from '@nestjs/common';
 import { ApiOperation, getSchemaPath } from '@nestjs/swagger';
-import { OkResponse } from 'src/common/base/base.swagger';
 import { AdminEntity } from '../admin/entities/admin.entity';
 import { UserType } from './interfaces/auth.interface';
 
