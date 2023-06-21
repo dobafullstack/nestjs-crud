@@ -16,17 +16,12 @@ services:
       - redis
   db:
     container_name: nest_db
-    image: postgres:14.1-alpine
+    image: mongo:7.0.0-rc4
     restart: always
-    env_file: ./.env
-    environment:
-      - POSTGRES_USER=$DB_USERNAME
-      - POSTGRES_PASSWORD=$DB_PASSWORD
-      - POSTGRES_DB=$DB_NAME
     ports:
-      - '5433:5432'
+      - '27018:27017'
     volumes: 
-      - ./.docker/db:/var/lib/postgresql/data
+      - ./.docker/db:/data/configdb
   redis:
     container_name: nest_redis
     image: redis:6.2-alpine

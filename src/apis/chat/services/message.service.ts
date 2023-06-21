@@ -1,29 +1,29 @@
 import { BaseService } from '@app/base';
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
+import { InjectModel } from '@nestjs/mongoose';
+import { Model } from 'mongoose';
 import { AdminService } from 'src/apis/admin/services/admin.service';
-import { Repository } from 'typeorm';
 import { CreateMessageDto } from '../dto/create-message.dto';
-import { MessageEntity } from '../entities/message.entity';
+import { MessageModel } from '../models/message.model';
 import { RoomService } from './room.service';
 
 @Injectable()
-export class MessageService extends BaseService<MessageEntity> {
+export class MessageService extends BaseService<MessageModel> {
 	name = 'Message';
 
 	constructor(
-		@InjectRepository(MessageEntity)
-		messageRepo: Repository<MessageEntity>,
+		@InjectModel(MessageModel.name)
+		private readonly messageModel: Model<MessageModel>,
 		private readonly adminService: AdminService,
 		private readonly roomService: RoomService
 	) {
-		super(messageRepo);
+		super(messageModel);
 	}
 
 	async create(input: CreateMessageDto) {
 		const { userId, roomId } = input;
 		await this.adminService.getOneByIdOrFail(userId);
 		await this.roomService.getOneByIdOrFail(roomId);
-		return this.repo.create(input).save();
+		return this.model.create(input);
 	}
 }

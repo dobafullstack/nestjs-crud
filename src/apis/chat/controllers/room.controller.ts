@@ -3,17 +3,17 @@ import { AuthAdmin } from '@app/decorators/auth-admin.decorator';
 import { User } from '@app/decorators/user.decorator';
 import { Body, Controller, Get, Param, Post, Query } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
-import { AdminEntity } from 'src/apis/admin/entities/admin.entity';
-import { ArrayContains } from 'typeorm';
+import { HydratedDocument } from 'mongoose';
+import { AdminModel } from 'src/apis/admin/models/admin.model';
 import { CreateRoomDto } from '../dto/create-room.dto';
 import { UpdateRoomDto } from '../dto/update-room.dto';
-import { RoomEntity } from '../entities/room.entity';
 import { RoomService } from '../services/room.service';
+import { RoomModel } from './../models/room.model';
 
 @Controller('room')
 @ApiTags('Chat Room API')
 @AuthAdmin()
-export class RoomController extends BaseController<RoomEntity>(RoomEntity, 'room') {
+export class RoomController extends BaseController<RoomModel>(RoomModel, 'room') {
 	relations = [];
 
 	constructor(private readonly roomService: RoomService) {
@@ -21,21 +21,21 @@ export class RoomController extends BaseController<RoomEntity>(RoomEntity, 'room
 	}
 
 	@Get('/all')
-	getAllByUserId(@Query() query: PaginationDto, @User() user: AdminEntity) {
+	getAllByUserId(@Query() query: PaginationDto, @User() user: HydratedDocument<AdminModel>) {
 		return this.roomService.getAllWithPagination(query, {
-			members: ArrayContains([user.id])
+			members: user.id
 		});
 	}
 
 	@Post('create')
-	@ApiCreate(RoomEntity, 'room')
-	create(@Body() body: CreateRoomDto): Promise<RoomEntity> {
+	@ApiCreate(RoomModel, 'room')
+	create(@Body() body: CreateRoomDto): Promise<RoomModel> {
 		return super.create(body);
 	}
 
 	@Post('update/:id')
-	@ApiUpdate(RoomEntity, 'room')
-	update(@Param('id') id: string, @Body() body: UpdateRoomDto): Promise<RoomEntity> {
+	@ApiUpdate(RoomModel, 'room')
+	update(@Param('id') id: string, @Body() body: UpdateRoomDto) {
 		return super.update(id, body);
 	}
 }

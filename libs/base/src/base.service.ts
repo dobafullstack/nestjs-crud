@@ -1,119 +1,144 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
-import { getQueryBuilder } from '@app/helpers/queryBuilder';
 import { NotFoundException } from '@nestjs/common';
-import { DeepPartial, FindOptionsOrder, FindOptionsWhere, Repository } from 'typeorm';
-import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
+import {
+	AnyKeys,
+	FilterQuery,
+	HydratedDocument,
+	Model as MongoModel,
+	SortOrder,
+	UpdateQuery
+} from 'mongoose';
 import { PaginationDto } from './base.dto';
-import { BaseEntity } from './base.entity';
+import { BaseModel } from './base.model';
 
-export abstract class BaseService<Entity extends BaseEntity> {
+export abstract class BaseService<Model extends BaseModel> {
 	abstract name: string;
 
-	constructor(public readonly repo: Repository<Entity>) {}
+	constructor(public readonly model: MongoModel<Model>) {}
 
 	async getAll(
-		where?: FindOptionsWhere<Entity> | FindOptionsWhere<Entity>[],
-		...relations: string[]
-	): Promise<Entity[]> {
-		return this.repo.find({ where, relations });
+		filter: FilterQuery<Model>,
+		...references: string[]
+	): Promise<HydratedDocument<Model>[]> {
+		const model = this.model.find(filter);
+		references.forEach((reference) => model.populate(reference));
+		return model.exec().then((res) => res['_doc']);
 	}
 
 	async getAllWithPagination(
 		query: PaginationDto,
-		where?: FindOptionsWhere<Entity> | FindOptionsWhere<Entity>[],
-		order?: FindOptionsOrder<Entity>,
-		...relations: string[]
-	): Promise<[Entity[], number]> {
-		const queryBuilder = getQueryBuilder(this.repo, query, where, order, ...relations);
-		return queryBuilder.getManyAndCount();
+		filter: FilterQuery<Model>,
+		sort?: { [key: string]: SortOrder },
+		...references: string[]
+	): Promise<[HydratedDocument<Model>[], number]> {
+		const limit = query.limit ? +query.limit : 10;
+		const page = query.page ? +query.page : 1;
+		const skip = limit * (page - 1);
+		delete query.limit;
+		delete query.page;
+
+		const queryKeys = Object.keys(query);
+		for (let i = 0; i < queryKeys.length; i++) {
+			const key = queryKeys[i];
+			Object.assign(filter, query[key]);
+		}
+
+		const count = await this.model.count(filter);
+		const model = this.model.find(filter).limit(limit).skip(skip).sort(sort);
+		references.forEach((reference) => model.populate(reference));
+		return model.exec().then((res) => [res, count]);
 	}
 
 	async getOne(
-		where?: FindOptionsWhere<Entity> | FindOptionsWhere<Entity>[],
-		...relations: string[]
-	): Promise<Entity | null> {
-		return this.repo.findOne({ where, relations });
+		filter: FilterQuery<Model>,
+		...references: string[]
+	): Promise<HydratedDocument<Model> | null> {
+		const model = this.model.findOne(filter);
+		references.forEach((reference) => model.populate(reference));
+		return model.exec();
 	}
 
-	async getOneById(id: string, ...relations: string[]): Promise<Entity | null> {
-		//@ts-ignore
-		return this.repo.findOne({ where: { id }, relations });
+	async getOneById(
+		_id: string,
+		...references: string[]
+	): Promise<HydratedDocument<Model> | null> {
+		const model = this.model.findOne({ _id });
+		references.forEach((reference) => model.populate(reference));
+		return model.exec();
 	}
 
 	async getOneOrFail(
-		where?: FindOptionsWhere<Entity> | FindOptionsWhere<Entity>[]
-	): Promise<Entity> {
-		const entity = await this.repo.findOne({ where });
-		if (!entity) {
+		filter: FilterQuery<Model>,
+		...references: string[]
+	): Promise<HydratedDocument<Model>> {
+		const model = this.model.findOne(filter);
+		references.forEach((reference) => model.populate(reference));
+		const getOneModel = await model.exec();
+		if (!getOneModel) {
 			const errorMessage = `${this.name} not found`;
 			throw new NotFoundException(errorMessage);
 		}
-		return entity;
+		return getOneModel;
 	}
 
-	async getOneByIdOrFail(id: string, ...relations: string[]): Promise<Entity> {
-		//@ts-ignore
-		const entity = await this.repo.findOne({ where: { id }, relations });
-		if (!entity) {
+	async getOneByIdOrFail(_id: string, ...references: string[]): Promise<HydratedDocument<Model>> {
+		const model = this.model.findById(_id);
+		references.forEach((reference) => model.populate(reference));
+		const getOneModel = await model.exec();
+		if (!getOneModel) {
 			const errorMessage = `${this.name} not found`;
 			throw new NotFoundException(errorMessage);
 		}
-		return entity;
+		return getOneModel;
 	}
 
-	async create(data: DeepPartial<Entity>): Promise<Entity> {
-		return this.repo.create(data).save();
+	async create(data: Model | AnyKeys<Model>): Promise<HydratedDocument<Model>> {
+		return this.model.create(data);
 	}
 
-	async createMany(data: DeepPartial<Entity>[]): Promise<Entity[]> {
-		const result: Entity[] = [];
-		const newEntities = this.repo.create(data);
-		for (let i = 0; i < newEntities.length; i++) {
-			const newEntity = await newEntities[i].save();
-			result.push(newEntity);
-		}
-		return result;
-	}
-
-	async update(entity: Entity, data: QueryDeepPartialEntity<Entity>) {
-		const keys = Object.keys(data);
-		for (let i = 0; i < keys.length; i++) {
-			const key = keys[i];
-			entity[key] = data[key];
-		}
-		return entity.save();
+	async createMany(...data: (Model | AnyKeys<Model>)[]): Promise<HydratedDocument<Model>[]> {
+		return this.model.create(data);
 	}
 
 	async updateBy(
-		where: FindOptionsWhere<Entity> | FindOptionsWhere<Entity>[],
-		data: QueryDeepPartialEntity<Entity>
-	) {
-		const entity = await this.getOneOrFail(where);
-		return this.update(entity, data);
+		filter: FilterQuery<Model>,
+		update: UpdateQuery<Model>
+	): Promise<HydratedDocument<Model>> {
+		const model = await this.getOneOrFail(filter);
+		await this.model.findOneAndUpdate(filter, update, { new: true });
+		return Object.assign(model, update);
 	}
 
-	async updateById(id: string, data: QueryDeepPartialEntity<Entity>) {
-		const entity = await this.getOneByIdOrFail(id);
-		return this.update(entity, data);
+	async updateById(_id: string, update: UpdateQuery<Model>): Promise<HydratedDocument<Model>> {
+		const model = await this.getOneByIdOrFail(_id);
+		await this.model.findOneAndUpdate({ _id }, update, { new: true });
+		return Object.assign(model, update);
 	}
 
-	async deleteBy(where: FindOptionsWhere<Entity> | FindOptionsWhere<Entity>[]) {
-		const entity = await this.getOneOrFail(where);
-		return this.repo.remove(entity);
+	async deleteBy(filter: FilterQuery<Model>): Promise<HydratedDocument<Model>> {
+		const model = await this.getOneOrFail(filter);
+		await this.model.findOneAndDelete(filter);
+		return model;
 	}
 
-	async deleteById(id: string) {
-		const entity = await this.getOneByIdOrFail(id);
-		return this.repo.remove(entity);
+	async deleteById(_id: string): Promise<HydratedDocument<Model>> {
+		const model = await this.getOneByIdOrFail(_id);
+		await this.model.findOneAndDelete({ _id });
+		return model;
 	}
 
-	async softDelete(where: FindOptionsWhere<Entity> | FindOptionsWhere<Entity>[]) {
-		const entity = await this.getOneOrFail(where);
-		return this.repo.softRemove(entity);
+	async softDelete(filter: FilterQuery<Model>): Promise<HydratedDocument<Model>> {
+		const model = await this.getOneOrFail(filter);
+		const now = new Date();
+		const update = { deletedAt: now };
+		await this.model.findOneAndUpdate(filter, update);
+		return Object.assign(model, update);
 	}
 
-	async softDeleteById(id: string) {
-		const entity = await this.getOneByIdOrFail(id);
-		return this.repo.softRemove(entity);
+	async softDeleteById(_id: string): Promise<HydratedDocument<Model>> {
+		const model = await this.getOneOrFail({ _id });
+		const now = new Date();
+		const update = { deletedAt: now };
+		await this.model.findOneAndUpdate({ _id }, update);
+		return Object.assign(model, update);
 	}
 }

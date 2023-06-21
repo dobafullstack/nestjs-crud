@@ -1,6 +1,8 @@
 import { INestApplication, Logger } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-import { AdminEntity } from 'src/apis/admin/entities/admin.entity';
+import { AdminModel } from 'src/apis/admin/models/admin.model';
+import { MessageModel } from 'src/apis/chat/models/message.model';
+import { RoomModel } from 'src/apis/chat/models/room.model';
 
 export function useSwagger(app: INestApplication) {
 	const logger = new Logger('Swagger');
@@ -34,4 +36,4 @@ export function useSwagger(app: INestApplication) {
 	logger.log(`Your documentation is running on http://localhost:${port}/${path}`);
 }
 
-const extraModels = [AdminEntity];
+const extraModels = [AdminModel, RoomModel, MessageModel];

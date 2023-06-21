@@ -44,8 +44,8 @@ export class AuthService {
 		const refreshToken = await this.redisService.getRefreshToken(decryptData);
 		// Get Token from refresh token
 		const user = await this.getUser(refreshToken, userType);
-		const { id } = user;
-		const accessToken = this.jwtService.signJwt({ id });
+		const { _id } = user;
+		const accessToken = this.jwtService.signJwt({ id: _id.toString() });
 		const result = { user, accessToken };
 		return result;
 	}
@@ -69,11 +69,11 @@ export class AuthService {
 		}
 		const hashedPassword = await argon2.hash(newPassword);
 		const targetServices = this.getService(userType);
-		return targetServices.updateById(user.id, { password: hashedPassword });
+		return targetServices.updateById(user._id.toString(), { password: hashedPassword });
 	}
 
 	async logout(user: User) {
-		const sub = user.id;
+		const sub = user._id.toString();
 		this.redisService.delRFToken(sub);
 		this.redisService.delAccessToken(sub);
 		const result = { message: 'Logout successfully' };

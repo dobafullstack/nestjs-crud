@@ -1,7 +1,7 @@
 import { OkResponse } from '@app/base';
 import { applyDecorators } from '@nestjs/common';
 import { ApiOperation, getSchemaPath } from '@nestjs/swagger';
-import { AdminEntity } from '../admin/entities/admin.entity';
+import { AdminModel } from '../admin/models/admin.model';
 import { UserType } from './interfaces/auth.interface';
 
 const getRef = (userType: UserType) => {
@@ -9,7 +9,7 @@ const getRef = (userType: UserType) => {
 
 	switch (userType) {
 		case 'admin':
-			$ref = AdminEntity;
+			$ref = AdminModel;
 			break;
 	}
 

@@ -1,21 +1,21 @@
 import { BaseService } from '@app/base';
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
+import { InjectModel } from '@nestjs/mongoose';
+import { Model } from 'mongoose';
 import { AdminService } from 'src/apis/admin/services/admin.service';
-import { Repository } from 'typeorm';
 import { CreateRoomDto } from '../dto/create-room.dto';
-import { RoomEntity } from '../entities/room.entity';
+import { RoomModel } from '../models/room.model';
 
 @Injectable()
-export class RoomService extends BaseService<RoomEntity> {
+export class RoomService extends BaseService<RoomModel> {
 	name = 'Room';
 
 	constructor(
-		@InjectRepository(RoomEntity)
-		private readonly roomRepo: Repository<RoomEntity>,
+		@InjectModel(RoomModel.name)
+		private readonly roomModel: Model<RoomModel>,
 		private readonly adminService: AdminService
 	) {
-		super(roomRepo);
+		super(roomModel);
 	}
 
 	async create(input: CreateRoomDto) {
@@ -24,6 +24,6 @@ export class RoomService extends BaseService<RoomEntity> {
 			const adminId = members[i];
 			await this.adminService.getOneById(adminId);
 		}
-		return this.repo.create(input).save();
+		return this.model.create(input);
 	}
 }

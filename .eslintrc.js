@@ -33,7 +33,8 @@ module.exports = {
 			},
 			{
 				selector: 'property',
-				format: ['camelCase', 'UPPER_CASE']
+				format: ['camelCase', 'UPPER_CASE'],
+				leadingUnderscore: 'allow'
 			},
 			{
 				selector: 'method',
@@ -41,7 +42,8 @@ module.exports = {
 			},
 			{
 				selector: 'variable',
-				format: ['camelCase', 'PascalCase']
+				format: ['camelCase', 'PascalCase'],
+				leadingUnderscore: 'allow'
 			},
 			{
 				selector: 'function',

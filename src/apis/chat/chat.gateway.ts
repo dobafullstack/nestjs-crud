@@ -13,7 +13,6 @@ import {
 import { Server, Socket } from 'socket.io';
 import { AdminService } from '../admin/services/admin.service';
 import { ChatMessage } from './dto/chat-message.dto';
-import { MessageEntity } from './entities/message.entity';
 import { MessageService } from './services/message.service';
 import { RoomService } from './services/room.service';
 
@@ -36,13 +35,13 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 
 	async handleDisconnect(client: Socket) {
 		const user = await this.getUserData(client);
-		this.redisService.del(`CHAT:${user.id}`);
+		this.redisService.del(`CHAT:${user._id.toString()}`);
 	}
 
 	async handleConnection(client: Socket, ..._args: any[]) {
 		const user = await this.getUserData(client);
 		this.redisService.set({
-			key: `CHAT:${user.id}`,
+			key: `CHAT:${user._id.toString()}`,
 			value: client.id,
 			expired: TokenExpires.redisRefreshToken
 		});
@@ -80,11 +79,11 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 				socketIds.push(socketId);
 			}
 		}
-		const message = new MessageEntity();
-		message.roomId = roomId;
-		message.user = user;
-		message.text = text;
-		const newMessage = await message.save();
+		const newMessage = await this.messageService.create({
+			roomId,
+			text,
+			userId: user._id.toString()
+		});
 		socketIds.forEach((socketId) => {
 			client.to(socketId).emit('receiveMessage', {
 				...newMessage,

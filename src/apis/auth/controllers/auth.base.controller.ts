@@ -3,14 +3,15 @@ import { User } from '@app/decorators/user.decorator';
 import { Body, Get, HttpCode, Post, Req, Res, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { Request, Response } from 'express';
-import { AdminEntity } from 'src/apis/admin/entities/admin.entity';
+import { HydratedDocument } from 'mongoose';
+import { AdminModel } from 'src/apis/admin/models/admin.model';
 import { ApiChangePassword, ApiLogin, ApiLogout, ApiRefreshToken } from '../auth.swagger';
 import { ChangePasswordDto } from '../dtos/change-password.dto';
 import { LoginDto } from '../dtos/login.dto';
 import { UserType } from '../interfaces/auth.interface';
 import { AuthService } from '../services/auth.service';
 
-export const AuthBaseController = <Entity extends AdminEntity>(
+export const AuthBaseController = <Entity extends AdminModel>(
 	userType: UserType,
 	strategyKey: string
 ) => {
@@ -23,7 +24,7 @@ export const AuthBaseController = <Entity extends AdminEntity>(
 		@UseGuards(AuthGuard(strategyKey))
 		async login(
 			@Body() _login: LoginDto, // Load to Swagger
-			@User() userData: Entity,
+			@User() userData: HydratedDocument<Entity>,
 			@Res({ passthrough: true }) response: Response
 		) {
 			return this.authService.login(userData, response);
@@ -39,7 +40,10 @@ export const AuthBaseController = <Entity extends AdminEntity>(
 		@HttpCode(200)
 		@ApiChangePassword(userType)
 		@AuthAdmin()
-		async changePassword(@Body() body: ChangePasswordDto, @User() user: Entity) {
+		async changePassword(
+			@Body() body: ChangePasswordDto,
+			@User() user: HydratedDocument<Entity>
+		) {
 			return this.authService.changePassword(body, user, userType);
 		}
 
@@ -47,7 +51,7 @@ export const AuthBaseController = <Entity extends AdminEntity>(
 		@HttpCode(200)
 		@ApiLogout(userType)
 		@AuthAdmin()
-		async logout(@User() user: Entity) {
+		async logout(@User() user: HydratedDocument<Entity>) {
 			return this.authService.logout(user);
 		}
 	}

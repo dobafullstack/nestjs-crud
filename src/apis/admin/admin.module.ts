@@ -1,11 +1,11 @@
 import { Module } from '@nestjs/common';
-import { TypeOrmModule } from '@nestjs/typeorm';
+import { MongooseModule } from '@nestjs/mongoose';
 import { AdminController } from './controllers/admin.controller';
-import { AdminEntity } from './entities/admin.entity';
+import { AdminModel, AdminSchema } from './models/admin.model';
 import { AdminService } from './services/admin.service';
 
 @Module({
-	imports: [TypeOrmModule.forFeature([AdminEntity])],
+	imports: [MongooseModule.forFeature([{ name: AdminModel.name, schema: AdminSchema }])],
 	controllers: [AdminController],
 	providers: [AdminService],
 	exports: [AdminService]

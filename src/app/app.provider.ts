@@ -1,13 +1,6 @@
 import { HttpExceptionFilter } from '@app/filters/http-exception.filter';
-import { TypeormExceptionFilter } from '@app/filters/typeorm-exception.filter';
 import { ResponseTransformInterceptor } from '@app/interceptors/response-transform.interceptor';
-import {
-	BadRequestException,
-	ClassSerializerInterceptor,
-	Provider,
-	ValidationError,
-	ValidationPipe
-} from '@nestjs/common';
+import { BadRequestException, Provider, ValidationError, ValidationPipe } from '@nestjs/common';
 import { APP_FILTER, APP_INTERCEPTOR, APP_PIPE } from '@nestjs/core';
 
 const exceptionFactory = (errors: ValidationError[]) => {
@@ -39,16 +32,8 @@ export const providers: Provider[] = [
 		useClass: HttpExceptionFilter
 	},
 	{
-		provide: APP_FILTER,
-		useClass: TypeormExceptionFilter
-	},
-	{
 		provide: APP_INTERCEPTOR,
 		useClass: ResponseTransformInterceptor
-	},
-	{
-		provide: APP_INTERCEPTOR,
-		useClass: ClassSerializerInterceptor
 	},
 	{
 		provide: APP_PIPE,

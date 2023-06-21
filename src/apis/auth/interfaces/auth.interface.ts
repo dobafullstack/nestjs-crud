@@ -1,5 +1,6 @@
-import { AdminEntity } from '../../admin/entities/admin.entity';
+import { HydratedDocument } from 'mongoose';
+import { AdminModel } from 'src/apis/admin/models/admin.model';
 
 export type UserType = 'admin';
 
-export type User = AdminEntity;
+export type User = HydratedDocument<AdminModel>;

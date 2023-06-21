@@ -21,8 +21,7 @@ export class JwtAdminStrategy extends PassportStrategy(Strategy, StrategyKey.JWT
 
 	async validate(payload: JwtPayload) {
 		const { id } = payload;
-		const where = { id };
 		await this.redisService.getAccessToken(id);
-		return this.adminService.getOneOrFail(where);
+		return this.adminService.getOneByIdOrFail(id);
 	}
 }
