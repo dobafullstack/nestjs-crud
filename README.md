@@ -22,20 +22,19 @@ $ cp .env.example .env.development
 ```
 
 ```bash
-NODE_ENV=development | production | test
-PORT= App Port
-DB_HOST= Database Host
-DB_PORT= Database Port
-DB_USERNAME= Database Username
-DB_PASSWORD= Database Password
-DB_NAME= Database Name
-REDIS_HOST= Redis Host
-REDIS_PORT= Redis Port
-REDIS_DB= Redis DB
-REDIS_PASSWORD= Redis Password
+NODE_ENV=development
+PORT=3000
+DB_HOST=localhost
+DB_PORT=27017
+DB_NAME=nestjs
+REDIS_HOST=localhost
+REDIS_PORT=6379
+REDIS_DB=2
+REDIS_PASSWORD= Redis password
 SECRET_JWT= What ever
 SECRET_KEY= What ever
 SECRET_KEY_IV= What ever
+MONGO_URL=mongodb://${DB_HOST}:${DB_PORT}/${DB_NAME}
 ```
 
 ## Running the app
@@ -50,6 +49,13 @@ $ yarn run start:dev
 # production mode
 $ yarn run start:prod
 ```
+
+## Docker
+
+```bash
+$ docker compose up -d --build
+```
+
 ## Generate CRUD Module
 I have customized @nestjs/schematics that will generate follow my own template.
 ```bash
@@ -63,7 +69,7 @@ This is my customized template
 module-name
 ├── controllers
 ├── dto
-├── entities
+├── models
 ├── services
 └── test
 ```
