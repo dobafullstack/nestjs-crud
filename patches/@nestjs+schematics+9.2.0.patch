@@ -125,10 +125,10 @@ index 21943aa..0000000
 -<% } %>}
 diff --git a/node_modules/@nestjs/schematics/dist/lib/resource/files/ts/controllers/__name__.controller.ts b/node_modules/@nestjs/schematics/dist/lib/resource/files/ts/controllers/__name__.controller.ts
 new file mode 100644
-index 0000000..a0cbff1
+index 0000000..d45199f
 --- /dev/null
 +++ b/node_modules/@nestjs/schematics/dist/lib/resource/files/ts/controllers/__name__.controller.ts
-@@ -0,0 +1,59 @@
+@@ -0,0 +1,58 @@
 +<% if (crud && type === 'rest') { %>import { Controller, Post, Body, Patch, Param } from '@nestjs/common';<%
 +} else if (crud && type === 'microservice') { %>import { Controller } from '@nestjs/common';
 +import { MessagePattern, Payload } from '@nestjs/microservices';<%
@@ -137,9 +137,8 @@ index 0000000..a0cbff1
 +import { <%= classify(name) %>Service } from '../services/<%= name %>.service';<% if (crud) { %>
 +import { Create<%= singular(classify(name)) %>Dto } from '../dto/create-<%= singular(name) %>.dto';
 +import { Update<%= singular(classify(name)) %>Dto } from '../dto/update-<%= singular(name) %>.dto';
-+import { BaseController } from '@app/base/base.controller';
-+import { <%= classify(name) %>Model } from '../models/<%= name %>.model';
-+import { ApiCreate, ApiUpdate } from '@app/base/base.swagger';<% } %>
++import { BaseController, ApiCreate, ApiUpdate } from '@app/base';
++import { <%= classify(name) %>Model } from '../models/<%= name %>.model';<% } %>
 +import { ApiTags } from '@nestjs/swagger';
 +
 +<% if (type === 'rest') { %>@Controller('<%= dasherize(name) %>')<% } else { %>@Controller()<% } %>
@@ -211,11 +210,11 @@ rename from node_modules/@nestjs/schematics/dist/lib/resource/files/ts/__name__.
 rename to node_modules/@nestjs/schematics/dist/lib/resource/files/ts/graphql/__name__.graphql
 diff --git a/node_modules/@nestjs/schematics/dist/lib/resource/files/ts/models/__name__.model.ts b/node_modules/@nestjs/schematics/dist/lib/resource/files/ts/models/__name__.model.ts
 new file mode 100644
-index 0000000..99bb1d0
+index 0000000..590a7fe
 --- /dev/null
 +++ b/node_modules/@nestjs/schematics/dist/lib/resource/files/ts/models/__name__.model.ts
 @@ -0,0 +1,12 @@
-+import { BaseModel } from '@app/base/base.model';
++import { BaseModel } from '@app/base';
 +import { Schema, SchemaFactory } from '@nestjs/mongoose';
 +import { HydratedDocument } from 'mongoose';
 +
@@ -233,12 +232,12 @@ rename from node_modules/@nestjs/schematics/dist/lib/resource/files/ts/__name__.
 rename to node_modules/@nestjs/schematics/dist/lib/resource/files/ts/resolvers/__name__.resolver.ts
 diff --git a/node_modules/@nestjs/schematics/dist/lib/resource/files/ts/services/__name__.service.ts b/node_modules/@nestjs/schematics/dist/lib/resource/files/ts/services/__name__.service.ts
 new file mode 100644
-index 0000000..bcf3075
+index 0000000..a38fa4f
 --- /dev/null
 +++ b/node_modules/@nestjs/schematics/dist/lib/resource/files/ts/services/__name__.service.ts
 @@ -0,0 +1,19 @@
 +import { Injectable } from '@nestjs/common';<% if (crud && type !== 'graphql-code-first' && type !== 'graphql-schema-first') { %>
-+import { BaseService } from '@app/base/base.service';
++import { BaseService } from '@app/base';
 +import { InjectModel } from '@nestjs/mongoose';
 +import { Model } from 'mongoose';
 +import { <%= classify(name) %>Model } from '../models/<%= name %>.model';<% } else if (crud) { %>
