@@ -292,7 +292,7 @@ UserModel just extends BaseModel and name the collection as the name of module
 ### UserService
 ```typescript
 @Injectable()
-export class UserService extends BaseService<UserEntity> {
+export class UserService extends BaseService<UserModel> {
 	name = 'User';
 
 	constructor(
