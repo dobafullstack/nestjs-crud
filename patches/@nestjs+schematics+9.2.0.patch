@@ -236,7 +236,7 @@ index 0000000..6ab6c4c
 +		@InjectRepository(<%= classify(name) %>Entity)
 +		private readonly <%= lowercased(name) %>Repo: Repository<<%= classify(name) %>Entity>
 +	) {
-+		super(testRepo);
++		super(<%= lowercased(name) %>Repo);
 +	}<% } %>
 +}
 diff --git a/node_modules/@nestjs/schematics/dist/lib/resource/files/ts/__name__.controller.__specFileSuffix__.ts b/node_modules/@nestjs/schematics/dist/lib/resource/files/ts/test/__name__.controller.__specFileSuffix__.ts
